@@ -1,0 +1,26 @@
+# Arquivos de byte compilados do Python
+__pycache__/
+
+# Arquivos .pyc compilados
+*.pyc
+
+# Diretório de ambiente virtual Python
+venv/
+
+# Arquivos de log
+*.log
+
+# Arquivos de backup
+*~
+
+# Arquivos de configuração local (por exemplo, para IDEs)
+*.swp
+.vscode/
+.idea/
+
+# Arquivos de Perfil de Usuarios
+perfis/
+*.pkl
+
+# Arquivos de Visualização
+*.ipynb
