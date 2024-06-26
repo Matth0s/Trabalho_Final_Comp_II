@@ -1,6 +1,6 @@
-from .perfil import Perfil
-from .excecoes import PerfilJaExisteError
-from .excecoes import ChavesDiferentes
+from src.perfil import Perfil
+from src.excecoes import PerfilJaExisteError
+from src.excecoes import ChavesDiferentes
 
 import os
 import base64
