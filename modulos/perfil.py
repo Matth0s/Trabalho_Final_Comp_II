@@ -1,6 +1,9 @@
-from src.senha import Senha
+from .excecoes import *
+from .senha import Senha
+from cryptography.fernet import Fernet
 
 import numpy as np
+import pickle
 
 class Perfil():
 	"""
@@ -25,11 +28,24 @@ class Perfil():
 		self.__chave = chave
 
 	def getSenhas(self):
-		getNomes = np.vectorize(lambda e: e.getNome())
+		getNomes = np.vectorize(lambda e: e.getNome(), otypes=[str])
 		return getNomes(self.__senhas)
 
 	def addSenha(self, senha):
 		self.__senhas = np.append(self.__senhas, senha)
+
+	def salvar(self):
+		"""
+		Salva todas as informações do Perfil logado no programa.
+		"""
+
+		try:
+			with open(f"./perfis/{self.__nome}.pkl", "wb") as arquivo:
+				obj_serializado = pickle.dumps(self)
+				obj_criptografado = Fernet(self.__chave).encrypt(obj_serializado)
+				arquivo.write(obj_criptografado)
+		except Exception as e:
+			print(f"Erro ao tentar salvar o Perfil {self.__nome}: {e}")
 
 	# def rmSenhaByName(self, senha):
 	# 	pass
@@ -54,3 +70,5 @@ class Perfil():
 
 # print(p.getSenhas())
 # new_arr = np.insert(arr, index, element)
+
+__all__ = ["PErfil"]

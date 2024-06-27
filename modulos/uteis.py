@@ -1,6 +1,5 @@
-from src.perfil import Perfil
-from src.excecoes import PerfilJaExisteError
-from src.excecoes import ChavesDiferentes
+from .perfil import Perfil
+from .excecoes import *
 
 import os
 import base64
@@ -31,26 +30,6 @@ def gerar_chave_mestra(nome_perfil, palavra_chave):
 
 	return chave
 
-def salvar_perfil(perfil):
-	"""
-	Salva todas as informações do Perfil logado no programa.
-
-	Parametros:
-		perfil: Perfil  -> objeto Perfil logado no programa.
-	"""
-
-	try:
-
-		f = Fernet(perfil.getChave())
-
-		with open(f"./perfis/{perfil.getNome()}.pkl", "wb") as arquivo:
-			obj_serializado = pickle.dumps(perfil)
-			obj_criptografado = f.encrypt(obj_serializado)
-			arquivo.write(obj_criptografado)
-
-	except Exception as e:
-		print(f"Erro ao tentar salvar o Perfil {perfil.getNome()}: {e}")
-
 def criar_perfil(nome, chave_mestra, chave_repetida):
 	"""
 	Cria um perfil novo utilizando os parametros passados e realizando as
@@ -73,11 +52,14 @@ def criar_perfil(nome, chave_mestra, chave_repetida):
 		ChavesDiferentes -> será lançado caso o usuario tenha passado as
 		chave_mestra e chave de confirmação diferentes.
 	"""
+	if nome == "":
+		raise NomeNuloError("Não é possivel criar perfis sem nome")
+
 	if os.path.exists(f"./perfis/{nome}.pkl"):
 		raise PerfilJaExisteError(f"O nome de perfil '{nome}' já esta sendo utilizado!")
 
 	if chave_mestra != chave_repetida:
-		raise ChavesDiferentes("As chaves mestras não são iguais!")
+		raise ChavesDiferentesError("As chaves mestras não são iguais!")
 
 	if not os.path.exists("./perfis"):
 		os.mkdir("./perfis")
@@ -115,6 +97,9 @@ def carregar_perfil(nome, chave_mestra):
 
 	"""
 
+	if nome == "":
+		raise NomeNuloError("O nome do Perfil é obrigatorio!")
+
 	f = Fernet(gerar_chave_mestra(nome, chave_mestra))
 
 	perfil = None
@@ -125,3 +110,10 @@ def carregar_perfil(nome, chave_mestra):
 		perfil = pickle.loads(obj_serializado)
 
 	return perfil
+
+
+__all__ = [
+	"gerar_chave_mestra",
+	"criar_perfil",
+	"carregar_perfil"
+	]

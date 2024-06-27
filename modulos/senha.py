@@ -1,6 +1,4 @@
-from src.excecoes import NomeNulo
-from src.excecoes import SemTipoDeCaractere
-from src.excecoes import TamanhoInvalido
+from .excecoes import *
 
 import string
 import random
@@ -9,6 +7,13 @@ class Senha():
 	"""
 	Classe que representa uma senha dentro do programa.
 	"""
+
+	tipos_codigos = [
+		0b0001, # Minusculos
+		0b0010, # Maiusculos
+		0b0100, # Numericos
+		0b1000  # Especiais
+	]
 
 	def __init__(self, nome, username="", URL="", tipo=0b0001, tamanho=1):
 		self.setNome(nome)
@@ -25,7 +30,7 @@ class Senha():
 	def setNome(self, nome):
 		nome = str(nome)
 		if nome == "":
-			raise NomeNulo("A senha precisa ter um identificador")
+			raise NomeNuloError("A senha precisa ter um identificador")
 		self.__nome = nome
 
 	def getUsername(self):
@@ -50,17 +55,16 @@ class Senha():
 		if tipo >= 0b10000 or tipo < 0b0000:
 			raise ValueError("O tipo de senha precisa ser um codigo de identificação valido!")
 		if tipo == 0b0000:
-			raise SemTipoDeCaractere("A senha precisa ter pelo menos um tipo de caractere!")
+			raise SemTipoDeCaractereError("A senha precisa ter pelo menos um tipo de caractere!")
 		self.__tipo = tipo
 
 	def getTamanho(self):
 		return self.__tamanho
 
 	def setTamanho(self, tamanho):
-		tamanhoMin = sum((self.__tipo & codigo) != 0 for codigo in [0b0001, 0b0010, 0b0100, 0b1000])
+		tamanhoMin = sum((self.__tipo & t_cod) != 0 for t_cod in self.tipos_codigos)
 		if tamanho == "" or int(tamanho) < tamanhoMin:
-			#    SemTipoDeCaractere("A senha precisa ter pelo menos um tipo de caractere!")
-			raise TamanhoInvalido(f"Tamanho precisa comportar os tipos selecionados (> {tamanhoMin})!")
+			raise TamanhoInvalidoError(f"Tamanho precisa comportar os tipos selecionados (> {tamanhoMin})!")
 		tamanho = int(tamanho)
 		self.__tamanho = tamanho
 
@@ -74,12 +78,6 @@ class Senha():
 		senha = ""
 		caracteres_possiveis = ""
 
-		tipos_codigos = [
-			0b0001, # Minusculos
-			0b0010, # Maiusculos
-			0b0100, # Numericos
-			0b1000  # Especiais
-		]
 		tipos_caracteres = [
 			string.ascii_lowercase, # Minusculos
 			string.ascii_uppercase, # Maiusculos
@@ -87,7 +85,7 @@ class Senha():
 			string.punctuation # Especiais
 		]
 
-		for t_cod, t_char in zip(tipos_codigos, tipos_caracteres):
+		for t_cod, t_char in zip(self.tipos_codigos, tipos_caracteres):
 			if (self.__tipo & t_cod) != 0:
 				caracteres_possiveis += t_char
 				senha += random.choice(t_char)
@@ -108,3 +106,6 @@ class Senha():
 		string += '| ' + str(self.__senha) + '\n'
 		string += ' ' + '_' * 20
 		return string
+
+
+__all__ = ["Senha"]
