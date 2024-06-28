@@ -3,8 +3,10 @@ from .excecoes import *
 from cryptography.fernet import InvalidToken
 from .uteis import criar_perfil
 from .uteis import carregar_perfil
+from .uteis import gerar_chave_mestra
 
 import tkinter as tk
+import os
 
 class FrameBemVindo(tk.Frame):
 	def __init__(self, parent, janela):
@@ -116,7 +118,7 @@ class FrameUsuarioOpcoes(tk.Frame):
 
 		botoes = [
 			["Criar Senha", lambda : self.__janela.trocar_frame("criar_senha")],
-			["Mudar Nome", None],
+			["Mudar Nome", lambda : self.__janela.trocar_frame("mudar_nome")],
 			["Mudar Chave Mestra", None],
 			["Gerar Estatisticas", None]
 		]
@@ -279,6 +281,53 @@ class FrameCarregarPerfil(FrameFormularioSimples):
 			super().erro_labels["chave"].config(text=f"Chave Mestra utilizada invalida!")
 		except Exception as e:
 			print(f"Erro ao tentar carregar o Perfil: {e}")
+			self.voltar()
+
+class FrameMudarNome(FrameFormularioSimples):
+	def __init__(self, parent, janela):
+		super().__init__(parent, janela)
+
+		super().criar_campo("nome", "Digite o Novo Nome")
+		super().criar_campo("chave", "Digite a Chave Mestra", '*')
+
+		super().setNomeAcao("Mudar")
+
+	def voltar(self):
+		super().janela.trocar_frame("usuario_opcoes")
+
+	def acao(self):
+		try:
+			for erro_label in super().erro_labels.values():
+				erro_label.config(text="")
+
+			old_nome = super().janela.perfil.getNome()
+			new_nome = super().entrys["nome"].get()
+			chave = super().entrys["chave"].get()
+
+			if new_nome == "":
+				raise NomeNuloError("O novo nome não pode ser vazio!")
+
+			if os.path.exists(f"./perfis/{new_nome}.pkl"):
+				raise PerfilJaExisteError(f"O nome de perfil '{new_nome}' já esta sendo utilizado!")
+
+			if super().janela.perfil.getChave() != gerar_chave_mestra(old_nome, chave):
+				raise InvalidToken("Chave Mestra utilizada invalida!")
+
+			super().janela.perfil.setNome(new_nome)
+			super().janela.perfil.setChave(gerar_chave_mestra(new_nome, chave))
+			super().janela.perfil.salvar()
+
+			os.remove(f"./perfis/{old_nome}.pkl")
+
+			super().janela.trocar_frame("usuario_opcoes")
+
+		except (NomeNuloError, PerfilJaExisteError) as e:
+			super().erro_labels["nome"].config(text=e)
+		except InvalidToken as e:
+			super().entrys["chave"].delete(0, tk.END)
+			super().erro_labels["chave"].config(text=e)
+		except Exception as e:
+			print(f"Erro ao tentar mudar nome do Perfil: {e}")
 			self.voltar()
 
 
