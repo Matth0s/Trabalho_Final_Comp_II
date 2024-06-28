@@ -26,6 +26,7 @@ class AcessoInvalidoError(Exception):
 	def __init__(self, mensagem):
 		super().__init__(mensagem)
 
+
 __all__ = [
 	"NomeNuloError",
 	"PerfilJaExisteError",

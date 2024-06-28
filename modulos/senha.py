@@ -96,16 +96,5 @@ class Senha():
 		embaralhar_senha = random.sample(senha, len(senha))
 		self.__senha =  "".join(embaralhar_senha)
 
-	def __str__(self):
-		string = '/' + '¨' * 20 + '\n'
-		string += '| ' + str(self.__nome) + '\n'
-		string += '| ' + str(self.__username) + '\n'
-		string += '| ' + str(self.__URL) + '\n'
-		string += '| ' + str(self.__tamanho) + '\n'
-		string += '| ' + str(self.__tipo) + '\n'
-		string += '| ' + str(self.__senha) + '\n'
-		string += ' ' + '_' * 20
-		return string
-
 
 __all__ = ["Senha"]

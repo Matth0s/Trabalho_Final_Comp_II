@@ -9,12 +9,9 @@ class Janela(tk.Tk):
 		self["background"] = "white"
 		self.geometry("400x400+100+100")
 
-		self.__perfil = Perfil("Teste", "Chave")
-		for i in range(10):
-			self.__perfil.addSenha(Senha(f"senha {i}"))
+		self.__perfil = None
 
 		self.__frame_atual = None
-
 		self.trocar_frame("bem_vindo")
 
 	@property
@@ -25,7 +22,7 @@ class Janela(tk.Tk):
 	def perfil(self, perfil):
 		self.__perfil = perfil
 
-	def trocar_frame(self, frame):
+	def trocar_frame(self, frame, **kwargs):
 		"""
 		Faz a troca de frames destruindo o antigo e criando o novo
 		"""
@@ -43,6 +40,8 @@ class Janela(tk.Tk):
 			self.__frame_atual = FrameUsuarioOpcoes(self, self)
 		elif frame == "criar_senha":
 			self.__frame_atual = FrameCriarSenha(self, self)
+		elif frame == "ver_senha":
+			self.__frame_atual = FrameVerSenha(self, self, kwargs["index"])
 
 		self.__frame_atual.pack(expand=True, fill=tk.BOTH)
 
@@ -50,20 +49,3 @@ class Janela(tk.Tk):
 if __name__ == "__main__":
 	janela = Janela()
 	janela.mainloop()
-
-"""
-Parametros de Avaliação do Programa
-	- Ter Conceito de POO
-	- Atributos Privados e Metodos de Acesso
-	- Persistência de Objetos
-	- Leitura de Arquivos
-	- Armazenamento de Graficos
-	- Tratamento de Exceções
-	- Numpy, Matplotlib, Pickle
-	- Grafico de plataformas utilizadas
-	- poder escrever as proprias senhas?
-	administrador do aplicativo, gerar senhas, guardar todas
-		herança
-		senhas
-Quando maior os conceitos trabalhados em aula, melhor
-"""

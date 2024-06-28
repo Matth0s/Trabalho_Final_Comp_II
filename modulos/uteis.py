@@ -23,7 +23,7 @@ def gerar_chave_mestra(nome_perfil, palavra_chave):
 	Retorno:
 		Fernet.key() -> uma chave gerada usando o PBKDF2HMAC
 	"""
-	nucleo = nome_perfil + palavra_chave
+	nucleo = nome_perfil.lower() + palavra_chave
 	n = len(nucleo).to_bytes(8, 'big')
 	kdf = PBKDF2HMAC(hashes.SHA256(), 32, n, 100000, default_backend())
 	chave = base64.urlsafe_b64encode(kdf.derive(nucleo.encode()))

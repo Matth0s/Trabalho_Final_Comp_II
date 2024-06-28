@@ -1,5 +1,4 @@
 from .excecoes import *
-from .senha import Senha
 from cryptography.fernet import Fernet
 
 import numpy as np
@@ -27,12 +26,18 @@ class Perfil():
 	def setChave(self, chave):
 		self.__chave = chave
 
-	def getSenhas(self):
-		getNomes = np.vectorize(lambda e: e.getNome(), otypes=[str])
-		return getNomes(self.__senhas)
-
 	def addSenha(self, senha):
 		self.__senhas = np.append(self.__senhas, senha)
+
+	def getSenhaByIdx(self, idx):
+		return self.__senhas[idx]
+
+	def removeSenhaByIdx(self, idx):
+		self.__senhas = np.delete(self.__senhas, idx)
+
+	def getNomesSenhas(self):
+		getNomes = np.vectorize(lambda e: e.getNome(), otypes=[str])
+		return getNomes(self.__senhas)
 
 	def salvar(self):
 		"""
@@ -47,28 +52,5 @@ class Perfil():
 		except Exception as e:
 			print(f"Erro ao tentar salvar o Perfil {self.__nome}: {e}")
 
-	# def rmSenhaByName(self, senha):
-	# 	pass
-	# def getSenhaByNome(self, nome):
-	# 	return
 
-	# def mostrarSenhas(self):
-	# 	return
-
-	# def __str__(self):
-	# 	exibir = ""
-	# 	exibir += f"+-----------------------------\n"
-	# 	exibir += f"| Nome   : {self.__nome}\n"
-	# 	exibir += f"| Senhas : {len(self.__senhas)}\n"
-	# 	exibir += f"+-----------------------------\n"
-	# 	return exibir
-
-# p = Perfil("Teste", "Chave")
-
-# for i in range(10):
-# 	p.addSenha(Senha(f"senha {i}"))
-
-# print(p.getSenhas())
-# new_arr = np.insert(arr, index, element)
-
-__all__ = ["PErfil"]
+__all__ = ["Perfil"]

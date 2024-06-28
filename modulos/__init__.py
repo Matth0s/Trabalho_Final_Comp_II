@@ -6,13 +6,14 @@ from .frames import FrameCriarPerfil
 from .frames import FrameCarregarPerfil
 from .frames import FrameUsuarioOpcoes
 from .frames import FrameCriarSenha
+from .frames import FrameVerSenha
 
 __all__ = ["Perfil",
-		   "Senha"
-		   ,
+		   "Senha",
 		   "FrameBemVindo",
 		   "FrameCriarPerfil",
 		   "FrameCarregarPerfil",
 		   "FrameUsuarioOpcoes",
-		   "FrameCriarSenha"
+		   "FrameCriarSenha",
+		   "FrameVerSenha"
 		   ]
