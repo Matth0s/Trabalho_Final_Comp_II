@@ -145,6 +145,7 @@ class FrameFormularioSimples(tk.Frame):
 		self.__botao_voltar = tk.Button(self, text="Voltar", bg="lightgrey", command=self.voltar)
 		self.__corpo = tk.Frame(self)
 		self.__botao_acao = tk.Button(self, text="Acão", bg="lightgrey", command=self.acao)
+		self.__janela.bind_all("<Return>", lambda _ : self.__botao_acao.invoke())
 
 		self.__botao_voltar.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
 		self.__corpo.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
@@ -234,6 +235,9 @@ class FrameCriarPerfil(FrameFormularioSimples):
 
 		except (NomeNuloError, PerfilJaExisteError) as e:
 			super().erro_labels["nome"].config(text=e)
+		except ChaveNulaError as e:
+			super().entrys["repetir"].delete(0, tk.END)
+			super().erro_labels["chave"].config(text=e)
 		except ChavesDiferentesError as e:
 			super().entrys["repetir"].delete(0, tk.END)
 			super().erro_labels["repetir"].config(text=e)
@@ -358,15 +362,15 @@ class FrameFormularioComplexo(tk.Frame):
 
 	def desativar(self):
 		for entry in self.__entrys.values():
-			entry.config(state=tk.DISABLED)
+			entry.config(state="readonly")
 		for check in self.__checks.values():
-			check.config(state=tk.DISABLED)
+			check.config(state="disabled")
 
 	def ativar(self):
 		for entry in self.__entrys.values():
-			entry.config(state=tk.NORMAL)
+			entry.config(state="normal")
 		for check in self.__checks.values():
-			check.config(state=tk.NORMAL)
+			check.config(state="normal")
 
 	def criar_entry(self, id, texto, width=26):
 		"""
@@ -510,12 +514,12 @@ class FrameCriarSenha(FrameFormularioComplexo):
 		super().criar_entry("nome", "Identificação")
 		super().criar_entry("username", "Username")
 		super().criar_entry("URL", "URL do Login")
-		super().criar_checkbutton("tipo", "Tipos de Caracteres", 2,
+		super().criar_checkbutton("tipo", "Tipos de Senha", 2,
 										maiusculos=[0b0001, 0],
 										minusculos=[0b0010, 0],
 										numeros=[0b0100, 0],
 										especiais=[0b1000, 0])
-		super().criar_entry("tamanho", "Tamanho Senha", 4)
+		super().criar_entry("tamanho", "Tamanho da Senha", 4)
 
 		super().setNomeAcao1("Gerar")
 		super().setNomeAcao2("Salvar")
@@ -559,12 +563,12 @@ class FrameVerSenha(FrameFormularioComplexo):
 		super().criar_entry("nome", "Identificação")
 		super().criar_entry("username", "Username")
 		super().criar_entry("URL", "URL do Login")
-		super().criar_checkbutton("tipo", "Tipos de Caracteres", 2,
+		super().criar_checkbutton("tipo", "Tipos de Senha", 2,
 										maiusculos=[0b0001, 0],
 										minusculos=[0b0010, 0],
 										numeros=[0b0100, 0],
 										especiais=[0b1000, 0])
-		super().criar_entry("tamanho", "Tamanho Senha", 4)
+		super().criar_entry("tamanho", "Tamanho da Senha", 4)
 		super().criar_entry_button("senha", "Senha", "Mostrar",
 					lambda s = self.__senha.getSenha() : self.popup_senha(s))
 

@@ -58,6 +58,9 @@ def criar_perfil(nome, chave_mestra, chave_repetida):
 	if os.path.exists(f"./perfis/{nome}.pkl"):
 		raise PerfilJaExisteError(f"O nome de perfil '{nome}' já esta sendo utilizado!")
 
+	if chave_mestra == "":
+		raise ChaveNulaError("É obrigatorio declarar uma Chave Mestra!")
+
 	if chave_mestra != chave_repetida:
 		raise ChavesDiferentesError("As chaves mestras não são iguais!")
 

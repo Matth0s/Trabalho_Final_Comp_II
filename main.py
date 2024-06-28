@@ -29,6 +29,7 @@ class Janela(tk.Tk):
 
 		if self.__frame_atual != None:
 			self.__frame_atual.destroy()
+			self.unbind_all("<Return>")
 
 		if frame == "bem_vindo":
 			self.__frame_atual = FrameBemVindo(self, self)

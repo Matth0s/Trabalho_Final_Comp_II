@@ -10,6 +10,10 @@ class PerfilJaExisteError(Exception):
 	def __init__(self, mensagem):
 		super().__init__(mensagem)
 
+class ChaveNulaError(Exception):
+	def __init__(self, mensagem):
+		super().__init__(mensagem)
+
 class ChavesDiferentesError(Exception):
 	def __init__(self, mensagem):
 		super().__init__(mensagem)
@@ -30,6 +34,7 @@ class AcessoInvalidoError(Exception):
 __all__ = [
 	"NomeNuloError",
 	"PerfilJaExisteError",
+	"ChaveNulaError",
 	"ChavesDiferentesError",
 	"SemTipoDeCaractereError",
 	"TamanhoInvalidoError",

@@ -27,7 +27,8 @@ class Perfil():
 		self.__chave = chave
 
 	def addSenha(self, senha):
-		self.__senhas = np.append(self.__senhas, senha)
+		idx = np.searchsorted(np.char.lower(self.getNomesSenhas()), senha.getNome().lower())
+		self.__senhas = np.insert(self.__senhas, idx, senha)
 
 	def getSenhaByIdx(self, idx):
 		return self.__senhas[idx]
