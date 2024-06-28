@@ -26,307 +26,6 @@ class FrameBemVindo(tk.Frame):
 			).pack(side=tk.TOP, padx=50, pady=20, fill=tk.BOTH)
 
 
-class FrameFormularioSimples(tk.Frame):
-	def __init__(self, parent, janela):
-		super().__init__(parent)
-		self.__janela = janela
-
-		self.__botao_voltar = tk.Button(self, text="Voltar", bg="lightgrey", command=self.voltar)
-		self.__corpo = tk.Frame(self)
-		self.__botao_acao = tk.Button(self, text="Acão", bg="lightgrey", command=self.acao)
-
-		self.__botao_voltar.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
-		self.__corpo.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
-		self.__botao_acao.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
-
-		self.__entrys = {}
-		self.__erro_labels = {}
-
-	@property
-	def janela(self):
-		return self.__janela
-
-	@property
-	def entrys(self):
-		return self.__entrys
-
-	@property
-	def erro_labels(self):
-		return self.__erro_labels
-
-	def voltar(self):
-		"""
-		Função que será sobrescrita nas subclasses de FrameFormularioSimples
-		para ser ativada ao apertar o botão "Voltar"
-		"""
-		pass
-
-	def acao(self):
-		"""
-		Função que será sobrescrita nas subclasses de FrameFormularioSimples
-		para ser ativada ao apertar o botão 'Ação'
-		"""
-		pass
-
-	def setNomeAcao(self, nome_acao):
-		"""
-		Função para as subclasses conseguirem personalizar o texto do botão de
-		'Ação'
-		"""
-		self.__botao_acao.config(text=nome_acao)
-
-	def criar_campo(self):
-		pass
-
-	def criar_Forms(self, campos_infos):
-		"""
-		Popula o corpo do formulario com a lista de informações dos campos passada
-
-		campos : [
-			[nome da label 1, id da entry 1, char de exibição da entry 1],
-			[nome da label 2, id da entry 2, char de exibição da entry 2],
-			...
-		]
-		"""
-		for campo_info in campos_infos:
-			frame_temp = tk.Frame(self.__corpo)
-			frame_temp.pack(pady=10, expand=True, fill=tk.BOTH)
-
-			tk.Label(frame_temp, text=campo_info[0], font=("Arial", 15)
-			).pack(side=tk.TOP, padx=10, pady=5)
-
-			self.__entrys[campo_info[1]] = tk.Entry(frame_temp, bg="lightgrey",
-												 width=30, show=campo_info[2])
-			self.__entrys[campo_info[1]].pack(side=tk.TOP)
-
-			self.__erro_labels[campo_info[1]] = tk.Label(frame_temp, text="",
-												 font=("Arial", 10), fg="red")
-			self.__erro_labels[campo_info[1]].pack(side=tk.TOP, padx=10)
-
-class FrameFormularioComplexo(tk.Frame):
-	def __init__(self, parent, janela):
-		super().__init__(parent)
-		self.__janela = janela
-
-		self.__botao_voltar = tk.Button(self, text="Voltar", bg="lightgrey", command=self.voltar)
-		self.__corpo = tk.Frame(self)
-		self.__botao_acao1 = tk.Button(self, text="Acão 1", bg="lightgrey", command=self.acao1)
-		self.__botao_acao2 = tk.Button(self, text="Acão 2", bg="lightgrey", command=self.acao2)
-
-		self.__botao_voltar.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
-		self.__corpo.pack(side=tk.TOP, expand=True)
-		self.__botao_acao1.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
-		self.__botao_acao_ativo = 1
-
-		self.__n_widges = 0
-		self.__entrys = {}
-		self.__checks = {}
-		self.__erro_labels = {}
-		self.__intvars = {}
-
-	@property
-	def janela(self):
-		return self.__janela
-
-	@property
-	def entrys(self):
-		return self.__entrys
-
-	@property
-	def erro_labels(self):
-		return self.__erro_labels
-
-	@property
-	def intvars(self):
-		return self.__intvars
-
-	def voltar(self):
-		self.__janela.trocar_frame("usuario_opcoes")
-
-	def acao1(self):
-		"""
-		Função que será sobrescrita nas subclasses de FrameFormularioComplexo para
-		ser ativada ao apertar o botão 'Ação 1'
-		"""
-		pass
-
-	def setNomeAcao1(self, nome_acao):
-		"""
-		Função para as subclasses conseguirem personalizar o texto do botão de
-		'Ação 1'
-		"""
-		self.__botao_acao1.config(text=nome_acao)
-
-	def acao2(self):
-		"""
-		Função que será sobrescrita nas subclasses de FrameFormularioComplexo para
-		ser ativada ao apertar o botão 'Ação 2'
-		"""
-		pass
-
-	def setNomeAcao2(self, nome_acao):
-		"""
-		Função para as subclasses conseguirem personalizar o texto do botão de
-		'Ação 2'
-		"""
-		self.__botao_acao2.config(text=nome_acao)
-
-	def alternar_acao(self):
-		if self.__botao_acao_ativo == 1:
-			self.__botao_acao1.pack_forget()
-			self.__botao_acao2.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
-			self.__botao_acao_ativo = 2
-		else:
-			self.__botao_acao2.pack_forget()
-			self.__botao_acao1.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
-			self.__botao_acao_ativo = 1
-
-	def desativar(self):
-		for entry in self.__entrys.values():
-			entry.config(state=tk.DISABLED)
-		for check in self.__checks.values():
-			check.config(state=tk.DISABLED)
-
-	def ativar(self):
-		for entry in self.__entrys.values():
-			entry.config(state=tk.NORMAL)
-		for check in self.__checks.values():
-			check.config(state=tk.NORMAL)
-
-	def criar_entry(self, id, text, width=26):
-		"""
-		Cria um bloco de widges formado por Label, Entry e Label Error
-		Parametros:
-			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
-			text: str -> texto que será inserido na label principal
-			widht: int -> width da entry que será criada
-		"""
-
-		tk.Label(self.__corpo, text=text, font=("Arial", 15)
-		   ).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
-
-		tk.Label(self.__corpo, text=":", font=("Arial", 15)
-		   ).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
-
-		self.__entrys[id] = tk.Entry(self.__corpo, bg="lightgrey", width=width)
-		self.__entrys[id].grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
-
-		self.__erro_labels[id] = tk.Label(self.__corpo, text="", font=("Arial", 10), fg="red")
-		self.__erro_labels[id].grid(row=self.__n_widges * 2 + 1, column=0, columnspan=3)
-
-		self.__n_widges += 1
-
-	def criar_checkbutton(self, id, text, n_col, **checks):
-		"""
-		Cria um bloco de widges formado por Label, Checkbutton 1, Checkbutton 2, ...
-		e Label Error
-		Parametros:
-			id: str -> chave que sera utilizada para guardar a label erros criada
-			text: str -> texto que será inserido na label principal
-			n_col: int -> numero que indica quantas Checkbuttons serão inseridas por linha
-		"""
-
-		tk.Label(self.__corpo, text=text, font=("Arial", 15)
-		   ).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
-
-		tk.Label(self.__corpo, text=":", font=("Arial", 15)
-		   ).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
-
-		frame_checks = tk.Frame(self.__corpo)
-		frame_checks.grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
-		frame_checks.grid_columnconfigure(0, weight=1)
-
-		for idx, (id_check, (on_check, off_check)) in enumerate(checks.items()):
-			self.__intvars[id_check] = tk.IntVar()
-			self.__checks[id_check] = tk.Checkbutton(frame_checks, text=id_check,
-										variable=self.__intvars[id_check],
-										onvalue=on_check, offvalue=off_check)
-			self.__checks[id_check].grid(row=idx%n_col, column=idx//n_col)
-
-		self.__erro_labels[id] = tk.Label(self.__corpo, text="", font=("Arial", 10), fg="red")
-		self.__erro_labels[id].grid(row=self.__n_widges * 2 + 1, column=0, columnspan=3)
-
-		self.__n_widges += 1
-
-	def criar_entry_button(self, id, text_label, text_button, action):
-		"""
-		Cria um bloco de widges formado por Label, Entry e Button
-		Parametros:
-			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
-			text_label: str -> texto que será inserido na label principal
-			text_button: str -> texto que será inserido nno botão
-			action: func -> função que será executada na interação do botão
-		"""
-
-		tk.Label(self.__corpo, text=text_label, font=("Arial", 15)
-			).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
-
-		tk.Label(self.__corpo, text=":", font=("Arial", 15)
-			).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
-
-		frame_conteiner = tk.Frame(self.__corpo)
-		frame_conteiner.grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
-		frame_conteiner.grid_columnconfigure(0, weight=1)
-
-		self.__entrys[id] = tk.Entry(frame_conteiner, bg="lightgrey", width=20)
-		self.__entrys[id].grid(row=0, column=0, sticky=tk.W)
-
-		tk.Button(frame_conteiner, text=text_button, bg="lightgrey", command=action
-			).grid(row=0, column=1, sticky=tk.W, padx=5)
-
-		self.__n_widges += 1
-
-	def popup_senha(self, texto):
-
-		def copiar():
-			popup.clipboard_clear()
-			popup.clipboard_append(texto)
-			popup.destroy()
-
-		popup = tk.Toplevel(self.janela)
-		popup.title("Senha")
-		popup.geometry("400x100+300+300")
-		popup.transient(self.janela)
-		popup.grab_set()
-
-		popup.grid_columnconfigure(0, weight=1)
-		popup.grid_rowconfigure(0, weight=1)
-
-		tk.Label(popup, text=texto, font=("Arial", 20), bg="lightgrey"
-			).grid(row=0, column=0, ipadx=5, ipady=5)
-		tk.Button(popup, text="Copiar", bg="lightgrey", command=copiar
-			).grid(row=0, column=1, padx=20)
-
-	def popup_confirmar(self, senha_idx):
-
-		def sim():
-			self.__janela.perfil.removeSenhaByIdx(senha_idx)
-			self.__janela.perfil.salvar()
-			popup.destroy()
-			self.voltar()
-
-		popup = tk.Toplevel(self.janela)
-		popup.title("Confirmar")
-		popup.geometry("300x100+300+300")
-		popup.transient(self.janela)
-		popup.grab_set()
-
-		popup.grid_columnconfigure(0, weight=1)
-		popup.grid_rowconfigure(0, weight=1)
-		popup.grid_rowconfigure(1, weight=1)
-
-		tk.Label(popup, text="Deseja Mesmo Deletar?", font=("Arial", 15)
-		   ).grid(row=0, column=0)
-
-		frame_botoes = tk.Frame(popup)
-		frame_botoes.grid(row=1, column=0)
-
-		tk.Button(frame_botoes, text="Sim", bg="lightgrey", command=sim
-			).grid(row=0, column=0, padx=20, ipadx=4, ipady=2)
-		tk.Button(frame_botoes, text="Não", bg="lightgrey", command=popup.destroy
-			).grid(row=0, column=1, padx=20, ipadx=4, ipady=2)
-
-
 class FrameScrollY(tk.Frame):
 	def __init__(self, parent, *args, **kwargs):
 		super().__init__(parent, *args, **kwargs)
@@ -438,16 +137,82 @@ class FrameUsuarioOpcoes(tk.Frame):
 			self.__botoes_senhas.append(botao)
 
 
+class FrameFormularioSimples(tk.Frame):
+	def __init__(self, parent, janela):
+		super().__init__(parent)
+		self.__janela = janela
+
+		self.__botao_voltar = tk.Button(self, text="Voltar", bg="lightgrey", command=self.voltar)
+		self.__corpo = tk.Frame(self)
+		self.__botao_acao = tk.Button(self, text="Acão", bg="lightgrey", command=self.acao)
+
+		self.__botao_voltar.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+		self.__corpo.pack(side=tk.TOP, expand=True, fill=tk.BOTH)
+		self.__botao_acao.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
+
+		self.__entrys = {}
+		self.__erro_labels = {}
+
+	@property
+	def janela(self):
+		return self.__janela
+
+	@property
+	def entrys(self):
+		return self.__entrys
+
+	@property
+	def erro_labels(self):
+		return self.__erro_labels
+
+	def voltar(self):
+		"""
+		Função que será sobrescrita nas subclasses de FrameFormularioSimples
+		para ser ativada ao apertar o botão "Voltar"
+		"""
+		pass
+
+	def acao(self):
+		"""
+		Função que será sobrescrita nas subclasses de FrameFormularioSimples
+		para ser ativada ao apertar o botão 'Ação'
+		"""
+		pass
+
+	def setNomeAcao(self, nome_acao):
+		"""
+		Função para as subclasses conseguirem personalizar o texto do botão de
+		'Ação'
+		"""
+		self.__botao_acao.config(text=nome_acao)
+
+	def criar_campo(self, id, texto, char=None):
+		"""
+		Cria um bloco de widges formado por Label, Entry e Label Error
+		Parametros:
+			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
+			texto: str -> texto que será inserido na label principal
+			char: int -> caracter que será exibido na digitação da entry
+		"""
+		frame = tk.Frame(self.__corpo)
+		frame.pack(pady=10, expand=True, fill=tk.BOTH)
+
+		tk.Label(frame, text=texto, font=("Arial", 15)
+			).pack(side=tk.TOP, padx=10, pady=5)
+
+		self.__entrys[id] = tk.Entry(frame, bg="lightgrey", width=30, show=char)
+		self.__entrys[id].pack(side=tk.TOP)
+
+		self.__erro_labels[id] = tk.Label(frame, text="", font=("Arial", 10), fg="red")
+		self.__erro_labels[id].pack(side=tk.TOP, padx=10)
+
 class FrameCriarPerfil(FrameFormularioSimples):
 	def __init__(self, parent, janela):
 		super().__init__(parent, janela)
 
-		campos_infos = [
-			["Nome do perfil", "nome", None],
-			["Chave Mestra", "chave", '*'],
-			["Repita a Chave Mestra", "repetir", '*']
-		]
-		super().criar_Forms(campos_infos)
+		super().criar_campo("nome", "Nome do perfil")
+		super().criar_campo("chave", "Chave Mestra", '*')
+		super().criar_campo("repetir", "Repita a Chave Mestra", '*')
 
 		super().setNomeAcao("Criar")
 
@@ -480,11 +245,8 @@ class FrameCarregarPerfil(FrameFormularioSimples):
 	def __init__(self, parent, janela):
 		super().__init__(parent, janela)
 
-		campos_infos = [
-			["Nome do perfil", "nome", None],
-			["Chave Mestra", "chave", '*'],
-		]
-		super().criar_Forms(campos_infos)
+		super().criar_campo("nome", "Nome do perfil")
+		super().criar_campo("chave", "Chave Mestra", '*')
 
 		super().setNomeAcao("Carregar")
 
@@ -515,6 +277,230 @@ class FrameCarregarPerfil(FrameFormularioSimples):
 			print(f"Erro ao tentar carregar o Perfil: {e}")
 			self.voltar()
 
+
+class FrameFormularioComplexo(tk.Frame):
+	def __init__(self, parent, janela):
+		super().__init__(parent)
+		self.__janela = janela
+
+		self.__botao_voltar = tk.Button(self, text="Voltar", bg="lightgrey", command=self.voltar)
+		self.__corpo = tk.Frame(self)
+		self.__botao_acao1 = tk.Button(self, text="Acão 1", bg="lightgrey", command=self.acao1)
+		self.__botao_acao2 = tk.Button(self, text="Acão 2", bg="lightgrey", command=self.acao2)
+
+		self.__botao_voltar.pack(side=tk.TOP, anchor=tk.W, padx=10, pady=10)
+		self.__corpo.pack(side=tk.TOP, expand=True)
+		self.__botao_acao1.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
+		self.__botao_acao_ativo = 1
+
+		self.__n_widges = 0
+		self.__entrys = {}
+		self.__checks = {}
+		self.__erro_labels = {}
+		self.__intvars = {}
+
+	@property
+	def janela(self):
+		return self.__janela
+
+	@property
+	def entrys(self):
+		return self.__entrys
+
+	@property
+	def erro_labels(self):
+		return self.__erro_labels
+
+	@property
+	def intvars(self):
+		return self.__intvars
+
+	def voltar(self):
+		self.__janela.trocar_frame("usuario_opcoes")
+
+	def acao1(self):
+		"""
+		Função que será sobrescrita nas subclasses de FrameFormularioComplexo para
+		ser ativada ao apertar o botão 'Ação 1'
+		"""
+		pass
+
+	def setNomeAcao1(self, nome_acao):
+		"""
+		Função para as subclasses conseguirem personalizar o texto do botão de
+		'Ação 1'
+		"""
+		self.__botao_acao1.config(text=nome_acao)
+
+	def acao2(self):
+		"""
+		Função que será sobrescrita nas subclasses de FrameFormularioComplexo para
+		ser ativada ao apertar o botão 'Ação 2'
+		"""
+		pass
+
+	def setNomeAcao2(self, nome_acao):
+		"""
+		Função para as subclasses conseguirem personalizar o texto do botão de
+		'Ação 2'
+		"""
+		self.__botao_acao2.config(text=nome_acao)
+
+	def alternar_acao(self):
+		if self.__botao_acao_ativo == 1:
+			self.__botao_acao1.pack_forget()
+			self.__botao_acao2.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
+			self.__botao_acao_ativo = 2
+		else:
+			self.__botao_acao2.pack_forget()
+			self.__botao_acao1.pack(side=tk.BOTTOM, anchor=tk.S, padx=10, pady=10)
+			self.__botao_acao_ativo = 1
+
+	def desativar(self):
+		for entry in self.__entrys.values():
+			entry.config(state=tk.DISABLED)
+		for check in self.__checks.values():
+			check.config(state=tk.DISABLED)
+
+	def ativar(self):
+		for entry in self.__entrys.values():
+			entry.config(state=tk.NORMAL)
+		for check in self.__checks.values():
+			check.config(state=tk.NORMAL)
+
+	def criar_entry(self, id, texto, width=26):
+		"""
+		Cria um bloco de widges formado por Label, Entry e Label Error
+		Parametros:
+			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
+			texto: str -> texto que será inserido na label principal
+			widht: int -> width da entry que será criada
+		"""
+		tk.Label(self.__corpo, text=texto, font=("Arial", 15)
+		   ).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
+
+		tk.Label(self.__corpo, text=":", font=("Arial", 15)
+		   ).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
+
+		self.__entrys[id] = tk.Entry(self.__corpo, bg="lightgrey", width=width)
+		self.__entrys[id].grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
+
+		self.__erro_labels[id] = tk.Label(self.__corpo, text="", font=("Arial", 10), fg="red")
+		self.__erro_labels[id].grid(row=self.__n_widges * 2 + 1, column=0, columnspan=3)
+
+		self.__n_widges += 1
+
+	def criar_checkbutton(self, id, texto, n_col, **checks):
+		"""
+		Cria um bloco de widges formado por Label, Checkbutton 1, Checkbutton 2, ...
+		e Label Error
+		Parametros:
+			id: str -> chave que sera utilizada para guardar a label erros criada
+			texto: str -> texto que será inserido na label principal
+			n_col: int -> numero que indica quantas Checkbuttons serão inseridas por linha
+		"""
+		tk.Label(self.__corpo, text=texto, font=("Arial", 15)
+		   ).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
+
+		tk.Label(self.__corpo, text=":", font=("Arial", 15)
+		   ).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
+
+		frame_checks = tk.Frame(self.__corpo)
+		frame_checks.grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
+		frame_checks.grid_columnconfigure(0, weight=1)
+
+		for idx, (id_check, (on_check, off_check)) in enumerate(checks.items()):
+			self.__intvars[id_check] = tk.IntVar()
+			self.__checks[id_check] = tk.Checkbutton(frame_checks, text=id_check,
+										variable=self.__intvars[id_check],
+										onvalue=on_check, offvalue=off_check)
+			self.__checks[id_check].grid(row=idx%n_col, column=idx//n_col)
+
+		self.__erro_labels[id] = tk.Label(self.__corpo, text="", font=("Arial", 10), fg="red")
+		self.__erro_labels[id].grid(row=self.__n_widges * 2 + 1, column=0, columnspan=3)
+
+		self.__n_widges += 1
+
+	def criar_entry_button(self, id, texto_label, texto_button, action):
+		"""
+		Cria um bloco de widges formado por Label, Entry e Button
+		Parametros:
+			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
+			texto_label: str -> texto que será inserido na label principal
+			texto_button: str -> texto que será inserido nno botão
+			action: func -> função que será executada na interação do botão
+		"""
+		tk.Label(self.__corpo, text=texto_label, font=("Arial", 15)
+			).grid(row=self.__n_widges * 2, column=0, sticky=tk.W)
+
+		tk.Label(self.__corpo, text=":", font=("Arial", 15)
+			).grid(row=self.__n_widges * 2, column=1, sticky=tk.E)
+
+		frame_conteiner = tk.Frame(self.__corpo)
+		frame_conteiner.grid(row=self.__n_widges * 2, column=2, sticky=tk.W)
+		frame_conteiner.grid_columnconfigure(0, weight=1)
+
+		self.__entrys[id] = tk.Entry(frame_conteiner, bg="lightgrey", width=20)
+		self.__entrys[id].grid(row=0, column=0, sticky=tk.W)
+
+		tk.Button(frame_conteiner, text=texto_button, bg="lightgrey", command=action
+			).grid(row=0, column=1, sticky=tk.W, padx=5)
+
+		self.__n_widges += 1
+
+	def popup_senha(self, texto):
+		"""
+		PopUp responsavel por exibir a senha
+		"""
+		def copiar():
+			popup.clipboard_clear()
+			popup.clipboard_append(texto)
+			popup.destroy()
+
+		popup = tk.Toplevel(self.janela)
+		popup.title("Senha")
+		popup.geometry("400x100+300+300")
+		popup.transient(self.janela)
+		popup.grab_set()
+
+		popup.grid_columnconfigure(0, weight=1)
+		popup.grid_rowconfigure(0, weight=1)
+
+		tk.Label(popup, text=texto, font=("Arial", 20), bg="lightgrey"
+			).grid(row=0, column=0, ipadx=5, ipady=5)
+		tk.Button(popup, text="Copiar", bg="lightgrey", command=copiar
+			).grid(row=0, column=1, padx=20)
+
+	def popup_confirmar(self, senha_idx):
+		"""
+		PopUp responsavel por confimar a exclusão de uma senha
+		"""
+		def sim():
+			self.__janela.perfil.removeSenhaByIdx(senha_idx)
+			self.__janela.perfil.salvar()
+			popup.destroy()
+			self.voltar()
+
+		popup = tk.Toplevel(self.janela)
+		popup.title("Confirmar")
+		popup.geometry("300x100+300+300")
+		popup.transient(self.janela)
+		popup.grab_set()
+
+		popup.grid_columnconfigure(0, weight=1)
+		popup.grid_rowconfigure(0, weight=1)
+		popup.grid_rowconfigure(1, weight=1)
+
+		tk.Label(popup, text="Deseja Mesmo Deletar?", font=("Arial", 15)
+		   ).grid(row=0, column=0)
+
+		frame_botoes = tk.Frame(popup)
+		frame_botoes.grid(row=1, column=0)
+
+		tk.Button(frame_botoes, text="Sim", bg="lightgrey", command=sim
+			).grid(row=0, column=0, padx=20, ipadx=4, ipady=2)
+		tk.Button(frame_botoes, text="Não", bg="lightgrey", command=popup.destroy
+			).grid(row=0, column=1, padx=20, ipadx=4, ipady=2)
 
 class FrameCriarSenha(FrameFormularioComplexo):
 	def __init__(self, parent, janela):
