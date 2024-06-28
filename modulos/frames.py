@@ -119,8 +119,8 @@ class FrameUsuarioOpcoes(tk.Frame):
 		botoes = [
 			["Criar Senha", lambda : self.__janela.trocar_frame("criar_senha")],
 			["Mudar Nome", lambda : self.__janela.trocar_frame("mudar_nome")],
-			["Mudar Chave Mestra", None],
-			["Gerar Estatisticas", None]
+			["Mudar Chave Mestra", lambda : self.__janela.trocar_frame("mudar_chave")],
+			["Gerar Estatisticas", lambda : print("Gerar Estatisticas Não Implementado")]
 		]
 		for botao in botoes:
 			tk.Button(frame_botoes, text=botao[0], bg="lightgrey", height=2,
@@ -328,6 +328,56 @@ class FrameMudarNome(FrameFormularioSimples):
 			super().erro_labels["chave"].config(text=e)
 		except Exception as e:
 			print(f"Erro ao tentar mudar nome do Perfil: {e}")
+			self.voltar()
+
+class FrameMudarChaveMestra(FrameFormularioSimples):
+	def __init__(self, parent, janela):
+		super().__init__(parent, janela)
+
+		super().criar_campo("old", "Digite a Chave Mestra Atual", '*')
+		super().criar_campo("new", "Digite a Nova Chave Mestra", '*')
+		super().criar_campo("repetir", "Repita a Nova Chave Mestra", '*')
+
+		super().setNomeAcao("Mudar")
+
+	def voltar(self):
+		super().janela.trocar_frame("usuario_opcoes")
+
+	def acao(self):
+		try:
+			for erro_label in super().erro_labels.values():
+				erro_label.config(text="")
+
+			old_chave = super().entrys["old"].get()
+			new_chave = super().entrys["new"].get()
+			repetir = super().entrys["repetir"].get()
+			nome = super().janela.perfil.getNome()
+
+			if super().janela.perfil.getChave() != gerar_chave_mestra(nome, old_chave):
+				raise InvalidToken("Chave Mestra utilizada invalida!")
+
+			if new_chave == "":
+				raise ChaveNulaError("É obrigatorio declarar uma Chave Mestra!")
+
+			if new_chave != repetir:
+				raise ChavesDiferentesError("As novas chaves mestras não são iguais!")
+
+			super().janela.perfil.setChave(gerar_chave_mestra(nome, new_chave))
+			super().janela.perfil.salvar()
+
+			super().janela.trocar_frame("usuario_opcoes")
+
+		except InvalidToken as e:
+			super().entrys["old"].delete(0, tk.END)
+			super().erro_labels["old"].config(text=e)
+		except ChaveNulaError as e:
+			super().entrys["new"].delete(0, tk.END)
+			super().erro_labels["new"].config(text=e)
+		except ChavesDiferentesError as e:
+			super().entrys["repetir"].delete(0, tk.END)
+			super().erro_labels["repetir"].config(text=e)
+		except Exception as e:
+			print(f"Erro ao tentar mudar a chave mestra do Perfil: {e}")
 			self.voltar()
 
 

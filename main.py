@@ -45,6 +45,8 @@ class Janela(tk.Tk):
 			self.__frame_atual = FrameVerSenha(self, self, kwargs["index"])
 		elif frame == "mudar_nome":
 			self.__frame_atual = FrameMudarNome(self, self)
+		elif frame == "mudar_chave":
+			self.__frame_atual = FrameMudarChaveMestra(self, self)
 
 		self.__frame_atual.pack(expand=True, fill=tk.BOTH)
 
