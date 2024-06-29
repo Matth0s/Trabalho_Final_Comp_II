@@ -7,7 +7,6 @@ class Senha():
 	"""
 	Classe que representa uma senha dentro do programa.
 	"""
-
 	tipos_codigos = [
 		0b0001, # Minusculos
 		0b0010, # Maiusculos

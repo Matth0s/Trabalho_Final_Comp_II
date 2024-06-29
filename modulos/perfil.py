@@ -8,7 +8,6 @@ class Perfil():
 	"""
 	Classe responsavel por armazenar e manipular as senhas e dados do usuario.
 	"""
-
 	def __init__(self, nome, chave):
 		self.__nome = nome
 		self.__chave = chave
@@ -39,6 +38,14 @@ class Perfil():
 	def getNomesSenhas(self):
 		getNomes = np.vectorize(lambda e: e.getNome(), otypes=[str])
 		return getNomes(self.__senhas)
+
+	def getTiposSenhas(self):
+		getTipos = np.vectorize(lambda e: e.getTipo(), otypes=[int])
+		return getTipos(self.__senhas)
+
+	def getTamanhosSenhas(self):
+		getTamanhos = np.vectorize(lambda e: e.getTamanho(), otypes=[int])
+		return getTamanhos(self.__senhas)
 
 	def salvar(self):
 		"""

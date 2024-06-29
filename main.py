@@ -47,6 +47,8 @@ class Janela(tk.Tk):
 			self.__frame_atual = FrameMudarNome(self, self)
 		elif frame == "mudar_chave":
 			self.__frame_atual = FrameMudarChaveMestra(self, self)
+		elif frame == "estatisticas":
+			self.__frame_atual = FrameGerarEstatisticas(self, self)
 
 		self.__frame_atual.pack(expand=True, fill=tk.BOTH)
 

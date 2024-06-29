@@ -97,9 +97,7 @@ def carregar_perfil(nome, chave_mestra):
 
 		InvalidToken -> será lançado caso a 'chave_mestra' sejá invalida para
 		o perfil selecionado
-
 	"""
-
 	if nome == "":
 		raise NomeNuloError("O nome do Perfil é obrigatorio!")
 

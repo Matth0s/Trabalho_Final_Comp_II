@@ -5,7 +5,9 @@ from .uteis import criar_perfil
 from .uteis import carregar_perfil
 from .uteis import gerar_chave_mestra
 
+import matplotlib.pyplot as plt
 import tkinter as tk
+import numpy as np
 import os
 
 class FrameBemVindo(tk.Frame):
@@ -120,7 +122,7 @@ class FrameUsuarioOpcoes(tk.Frame):
 			["Criar Senha", lambda : self.__janela.trocar_frame("criar_senha")],
 			["Mudar Nome", lambda : self.__janela.trocar_frame("mudar_nome")],
 			["Mudar Chave Mestra", lambda : self.__janela.trocar_frame("mudar_chave")],
-			["Gerar Estatisticas", lambda : print("Gerar Estatisticas Não Implementado")]
+			["Gerar Estatisticas", lambda : self.__janela.trocar_frame("estatisticas")]
 		]
 		for botao in botoes:
 			tk.Button(frame_botoes, text=botao[0], bg="lightgrey", height=2,
@@ -155,6 +157,7 @@ class FrameFormularioSimples(tk.Frame):
 
 		self.__entrys = {}
 		self.__erro_labels = {}
+		self.__intvars = {}
 
 	@property
 	def janela(self):
@@ -167,6 +170,10 @@ class FrameFormularioSimples(tk.Frame):
 	@property
 	def erro_labels(self):
 		return self.__erro_labels
+
+	@property
+	def intvars(self):
+		return self.__intvars
 
 	def voltar(self):
 		"""
@@ -208,6 +215,25 @@ class FrameFormularioSimples(tk.Frame):
 
 		self.__erro_labels[id] = tk.Label(frame, text="", font=("Arial", 10), fg="red")
 		self.__erro_labels[id].pack(side=tk.TOP, padx=10)
+
+	def criar_check(self, id, texto_label, texto_check):
+		"""
+		Cria um bloco de widges formado por Label e Checkbutton
+		Parametros:
+			id: str -> chave que sera utilizada para guardar as entrys e labels erros criadas
+			texto_label: str -> texto que será inserido na label
+			texto_check: int -> texto que será inserido no checkbutton
+		"""
+		frame = tk.Frame(self.__corpo)
+		frame.pack(side=tk.TOP, pady=10, expand=True, fill=tk.BOTH)
+
+		tk.Label(frame, text=texto_label, font=("Arial", 15)
+			).pack(side=tk.TOP, ipadx=10, ipady=5)
+
+		self.__intvars[id] = tk.IntVar()
+		tk.Checkbutton(frame, text=texto_check, font=("Arial", 15), bg="lightgrey",
+				variable=self.__intvars[id]
+			).pack(side=tk.TOP, ipadx=10, ipady=5)
 
 class FrameCriarPerfil(FrameFormularioSimples):
 	def __init__(self, parent, janela):
@@ -379,6 +405,145 @@ class FrameMudarChaveMestra(FrameFormularioSimples):
 		except Exception as e:
 			print(f"Erro ao tentar mudar a chave mestra do Perfil: {e}")
 			self.voltar()
+
+class FrameGerarEstatisticas(FrameFormularioSimples):
+	def __init__(self, parent, janela):
+		super().__init__(parent, janela)
+
+		super().criar_check("setor", "Distribuição dos Tipos de Senha", "Grafico de Setor")
+		super().criar_check("barra", "Distribuição dos Tamanhos de Senha", "Grafico de Barra")
+		super().criar_check("dispersao", "Tipos de Senha vs. Tamanhos de Senha", "Grafico de Dispersão")
+
+		super().setNomeAcao("Gerar")
+
+	def voltar(self):
+		super().janela.trocar_frame("usuario_opcoes")
+
+	def acao(self):
+		try:
+			if not os.path.exists("./estatisticas"):
+				os.mkdir("./estatisticas")
+
+			if super().intvars["setor"].get() == 1:
+				self.gerar_grafico_setor()
+
+			if super().intvars["barra"].get() == 1:
+				self.gerar_grafico_barrar()
+
+			if super().intvars["dispersao"].get() == 1:
+				self.gerar_grafico_dispersao()
+
+			for intvar in super().intvars.values():
+				intvar.set(0)
+
+			self.popup_gerado()
+
+		except Exception as e:
+			print(f"Erro ao tentar gerar as estatisticas do Perfil: {e}")
+			self.voltar()
+
+	def gerar_grafico_setor(self):
+		tipos, vezes = np.unique(super().janela.perfil.getTiposSenhas(), return_counts=True)
+		codigos = [0b0001 , 0b0010 , 0b0100 , 0b1000]
+		textos = ["Min, " , "Mai, " , "Num, " , "Esp, "]
+
+		legendas = []
+		for tipo in tipos:
+			legenda = ""
+			for codigo, texto in zip(codigos, textos):
+				if (tipo & codigo) != 0:
+					legenda += texto
+			legendas.append(legenda[:-2])
+
+		textos = [
+			"Min: Caracteres Minusculos",
+			"Mai: Caracteres Maiusculos",
+			"Num: Caracteres Numericos",
+			"Esp: Caracteres Especiais"
+		]
+		texto = "\n".join(textos)
+
+		fig, ax = plt.subplots(figsize=(12, 8))
+
+		ax.pie(vezes, autopct="%.2f%%", labels=legendas,
+			wedgeprops={'edgecolor': 'black', 'linewidth': 2}, textprops={'fontsize': 14})
+		ax.set_position([0.1, 0, 0.5, 1])
+		ax.set_title(f"Grafico de Setor dos Tipos de Senha", fontsize=20, fontweight='bold')
+
+		ax.text(1.8, -1.3, texto, fontsize=15, ha='left', va='center',
+					bbox=dict(facecolor='lightgray', alpha=0.5))
+		ax.legend(fontsize=15, bbox_to_anchor=(0.97, 0.95), bbox_transform=fig.transFigure)
+
+		fig.savefig(f"./estatisticas/setor_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+
+	def gerar_grafico_barrar(self):
+		tamanhos, vezes = np.unique(super().janela.perfil.getTamanhosSenhas(), return_counts=True)
+
+		fig, ax = plt.subplots(figsize=(12, 8))
+
+		ax.bar(tamanhos, vezes, tick_label=tamanhos, edgecolor='black', color="green")
+		ax.set_title('Grafico de Barras dos Tamanhos das Senhas', fontsize=20, fontweight='bold')
+		ax.set_xlabel('Valores dos Tamanhos')
+		ax.set_ylabel('Frequências dos Tamanhos')
+		ax.locator_params(axis='y', integer=True)
+
+		fig.savefig(f"./estatisticas/barra_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+
+	def gerar_grafico_dispersao(self):
+		tipos = super().janela.perfil.getTiposSenhas()
+		tamanhos = super().janela.perfil.getTamanhosSenhas()
+
+		codigos = [0b0001 , 0b0010 , 0b0100 , 0b1000]
+		textos = ["Min, " , "Mai, " , "Num, " , "Esp, "]
+		int_eixo_x = [i for i in range(1, 16)]
+		str_eixo_x = []
+		for idx in int_eixo_x:
+			x = ""
+			for codigo, texto in zip(codigos, textos):
+				if (idx & codigo) != 0:
+					x += texto
+			str_eixo_x.append(x[:-2])
+
+		textos = [
+			"Min: Caracteres Minusculos",
+			"Mai: Caracteres Maiusculos",
+			"Num: Caracteres Numericos",
+			"Esp: Caracteres Especiais"
+		]
+		texto = "\n".join(textos)
+
+		fig, ax = plt.subplots(figsize=(16, 8))
+
+		ax.scatter(tamanhos, tipos, s=100, c='cyan', alpha=0.6)
+		plt.subplots_adjust(left=0.05, right=0.8, top=0.9, bottom=0.15)
+		ax.text(15.5, 7, texto, fontsize=12, ha='left', va='center',
+					bbox=dict(facecolor='lightgray', alpha=0.5))
+
+		ax.set_title('Tipos de Senhas vs. Tamanhos de Senhas', fontsize=20, fontweight='bold')
+		ax.set_xlabel('Tipos de Senhas')
+		ax.set_ylabel('Tamanhos das Senhas')
+
+		ax.set_xlim(1, 15)
+		ax.set_xticks(int_eixo_x)
+		ax.set_xticklabels(str_eixo_x, rotation=-30, ha='left')
+		plt.grid(True)
+
+		fig.savefig(f"./estatisticas/pontos_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+
+	def popup_gerado(self):
+		"""
+		PopUp responsavel avisar que os graficos foram gerados
+		"""
+		popup = tk.Toplevel(self.janela)
+		popup.title("Sucesso")
+		popup.geometry("400x100+300+300")
+		popup.transient(self.janela)
+		popup.grab_set()
+
+		tk.Label(popup, text="Graficos Gerados Com Sucesso!", font=("Arial", 15)
+			).pack(side=tk.TOP, expand=True, fill=tk.BOTH, pady=5)
+		tk.Button(popup, text="Fechar", bg="lightgrey", command=popup.destroy
+			).pack(side=tk.BOTTOM, pady=15)
 
 
 class FrameFormularioComplexo(tk.Frame):
@@ -614,8 +779,8 @@ class FrameCriarSenha(FrameFormularioComplexo):
 		super().criar_entry("username", "Username")
 		super().criar_entry("URL", "URL do Login")
 		super().criar_checkbutton("tipo", "Tipos de Senha", 2,
-										maiusculos=[0b0001, 0],
-										minusculos=[0b0010, 0],
+										minusculos=[0b0001, 0],
+										maiusculos=[0b0010, 0],
 										numeros=[0b0100, 0],
 										especiais=[0b1000, 0])
 		super().criar_entry("tamanho", "Tamanho da Senha", 4)
@@ -663,8 +828,8 @@ class FrameVerSenha(FrameFormularioComplexo):
 		super().criar_entry("username", "Username")
 		super().criar_entry("URL", "URL do Login")
 		super().criar_checkbutton("tipo", "Tipos de Senha", 2,
-										maiusculos=[0b0001, 0],
-										minusculos=[0b0010, 0],
+										minusculos=[0b0001, 0],
+										maiusculos=[0b0010, 0],
 										numeros=[0b0100, 0],
 										especiais=[0b1000, 0])
 		super().criar_entry("tamanho", "Tamanho da Senha", 4)
@@ -684,16 +849,12 @@ class FrameVerSenha(FrameFormularioComplexo):
 		super().entrys["senha"].insert(0, "*" *  self.__senha.getTamanho())
 
 		tipo = self.__senha.getTipo()
-		boxes_infos = [
-			["maiusculos", 0b0001],
-			["minusculos", 0b0010],
-			["numeros", 0b0100],
-			["especiais", 0b1000]
-		]
 
-		for t_identificador,  t_cod in boxes_infos:
-			if (tipo & t_cod) != 0:
-				super().intvars[t_identificador].set(t_cod)
+		codigos = [0b0001, 0b0010, 0b0100, 0b1000]
+		legendas = ["minusculos", "maiusculos", "numeros", "especiais"]
+		for codigo,  legenda in zip(codigos, legendas):
+			if (tipo & codigo) != 0:
+				super().intvars[legenda].set(codigo)
 
 	def acao1(self):
 		self.popup_confirmar(self.__senha_idx)

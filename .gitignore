@@ -25,3 +25,7 @@ perfis/
 # Arquivos de Visualização
 *.ipynb
 teste.py
+
+# Arquivos de Estatisticas
+*.jpg
+estatisticas/
