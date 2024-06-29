@@ -264,7 +264,7 @@ class FrameCriarPerfil(FrameFormularioSimples):
 		except (NomeNuloError, PerfilJaExisteError) as e:
 			super().erro_labels["nome"].config(text=e)
 		except ChaveNulaError as e:
-			super().entrys["repetir"].delete(0, tk.END)
+			super().entrys["chave"].delete(0, tk.END)
 			super().erro_labels["chave"].config(text=e)
 		except ChavesDiferentesError as e:
 			super().entrys["repetir"].delete(0, tk.END)
