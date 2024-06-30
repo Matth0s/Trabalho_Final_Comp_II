@@ -1,13 +1,14 @@
-from modulos import *
-from .excecoes import *
 from cryptography.fernet import InvalidToken
-from .uteis import criar_perfil
-from .uteis import carregar_perfil
+from cryptography.fernet import Fernet
 from .uteis import gerar_chave_mestra
+from .excecoes import *
+from .perfil import Perfil
+from .senha import Senha
 
 import matplotlib.pyplot as plt
 import tkinter as tk
 import numpy as np
+import pickle
 import os
 
 class FrameBemVindo(tk.Frame):
@@ -253,18 +254,40 @@ class FrameCriarPerfil(FrameFormularioSimples):
 			for erro_label in super().erro_labels.values():
 				erro_label.config(text="")
 
-			super().janela.perfil = criar_perfil(
-					super().entrys["nome"].get(),
-					super().entrys["chave"].get(),
-					super().entrys["repetir"].get()
-				)
+			nome = super().entrys["nome"].get()
+			chave = super().entrys["chave"].get()
+			repetir = super().entrys["repetir"].get()
 
+			if nome == "":
+				raise NomeNuloError("Não é possivel criar perfis sem nome")
+
+			if os.path.exists(f"./perfis/{nome}.pkl"):
+				raise PerfilJaExisteError(f"O nome de perfil '{nome}' já esta sendo utilizado!")
+
+			if chave == "":
+				raise ChaveNulaError("É obrigatorio declarar uma Chave Mestra!")
+
+			if chave != repetir:
+				raise ChavesDiferentesError("As chaves mestras não são iguais!")
+
+			if not os.path.exists("./perfis"):
+				os.mkdir("./perfis")
+
+			perfil = Perfil(nome, gerar_chave_mestra(nome, chave))
+			f = Fernet(perfil.getChave())
+
+			with open(f"./perfis/{perfil.getNome()}.pkl", "wb") as arquivo:
+				obj_serializado = pickle.dumps(perfil)
+				obj_criptografado = f.encrypt(obj_serializado)
+				arquivo.write(obj_criptografado)
+
+			super().janela.perfil = perfil
 			super().janela.trocar_frame("usuario_opcoes")
 
 		except (NomeNuloError, PerfilJaExisteError) as e:
 			super().erro_labels["nome"].config(text=e)
 		except ChaveNulaError as e:
-			super().entrys["chave"].delete(0, tk.END)
+			super().entrys["repetir"].delete(0, tk.END)
 			super().erro_labels["chave"].config(text=e)
 		except ChavesDiferentesError as e:
 			super().entrys["repetir"].delete(0, tk.END)
@@ -290,10 +313,18 @@ class FrameCarregarPerfil(FrameFormularioSimples):
 			for erro_label in super().erro_labels.values():
 				erro_label.config(text="")
 
-			super().janela.perfil = carregar_perfil(
-					super().entrys["nome"].get(),
-					super().entrys["chave"].get()
-				)
+			nome = super().entrys["nome"].get()
+			chave = super().entrys["chave"].get()
+
+			if nome == "":
+				raise NomeNuloError("O nome do Perfil é obrigatorio!")
+
+			f = Fernet(gerar_chave_mestra(nome, chave))
+
+			with open(f"./perfis/{nome}.pkl", "rb") as arquivo:
+				obj_criptografado = arquivo.read()
+				obj_serializado = f.decrypt(obj_criptografado)
+				super().janela.perfil = pickle.loads(obj_serializado)
 
 			super().janela.trocar_frame("usuario_opcoes")
 

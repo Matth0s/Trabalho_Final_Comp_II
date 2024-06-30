@@ -11,7 +11,7 @@ class Perfil():
 	def __init__(self, nome, chave):
 		self.__nome = nome
 		self.__chave = chave
-		self.__senhas = np.array([])
+		self.__senhas = np.empty(0, dtype=object)
 
 	def getNome(self):
 		return self.__nome
@@ -51,7 +51,6 @@ class Perfil():
 		"""
 		Salva todas as informações do Perfil logado no programa.
 		"""
-
 		try:
 			with open(f"./perfis/{self.__nome}.pkl", "wb") as arquivo:
 				obj_serializado = pickle.dumps(self)
