@@ -506,19 +506,21 @@ class FrameGerarEstatisticas(FrameFormularioSimples):
 		ax.legend(fontsize=15, bbox_to_anchor=(0.97, 0.95), bbox_transform=fig.transFigure)
 
 		fig.savefig(f"./estatisticas/setor_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+		plt.close(fig)
 
 	def gerar_grafico_barrar(self):
 		tamanhos, vezes = np.unique(super().janela.perfil.getTamanhosSenhas(), return_counts=True)
 
 		fig, ax = plt.subplots(figsize=(12, 8))
 
-		ax.bar(tamanhos, vezes, tick_label=tamanhos, edgecolor='black', color="green")
+		ax.bar(tamanhos, vezes, tick_label=tamanhos, edgecolor='black', color="#661923")
 		ax.set_title('Grafico de Barras dos Tamanhos das Senhas', fontsize=20, fontweight='bold')
 		ax.set_xlabel('Valores dos Tamanhos')
 		ax.set_ylabel('Frequências dos Tamanhos')
 		ax.locator_params(axis='y', integer=True)
 
 		fig.savefig(f"./estatisticas/barra_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+		plt.close(fig)
 
 	def gerar_grafico_dispersao(self):
 		tipos = super().janela.perfil.getTiposSenhas()
@@ -545,7 +547,7 @@ class FrameGerarEstatisticas(FrameFormularioSimples):
 
 		fig, ax = plt.subplots(figsize=(16, 8))
 
-		ax.scatter(tamanhos, tipos, s=100, c='cyan', alpha=0.6)
+		ax.scatter(tamanhos, tipos, s=100, c='red', alpha=0.6)
 		plt.subplots_adjust(left=0.05, right=0.8, top=0.9, bottom=0.15)
 		ax.text(15.5, 7, texto, fontsize=12, ha='left', va='center',
 					bbox=dict(facecolor='lightgray', alpha=0.5))
@@ -560,6 +562,7 @@ class FrameGerarEstatisticas(FrameFormularioSimples):
 		plt.grid(True)
 
 		fig.savefig(f"./estatisticas/pontos_{super().janela.perfil.getNome()}.jpg", format='jpg', dpi = 100)
+		plt.close(fig)
 
 	def popup_gerado(self):
 		"""
