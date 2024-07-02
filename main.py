@@ -5,7 +5,7 @@ import tkinter as tk
 class Janela(tk.Tk):
 	def __init__(self):
 		super().__init__()
-		self.title("GGS")
+		self.title("VirtualKeep")
 		self["background"] = "white"
 		self.geometry("400x400+100+100")
 
