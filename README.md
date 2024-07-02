@@ -1,13 +1,13 @@
 # Gerador e Gerenciador de Senhas
 ## Autores:
-- Nomes:
+Nomes:
   - João Pedro Mello
   - Luiza Ferro
   - Matheus Moreira
 
 ## Introdução:
 
-Um programa de gerar e gerenciar senhas é uma ferramenta essencial para garantir a segurança digital. Ele cria senhas complexas e únicas para cada uma de suas contas, além disso, armazena suas senhas de forma segura, facilitando o acesso sem comprometer a segurança.
+Um programa de gerar e gerenciar senhas é uma ferramenta essencial para garantir a segurança digital. Ele cria senhas complexas e únicas para cada uma de suas contas. Além disso, armazena suas senhas de forma segura, facilitando o acesso sem comprometer a segurança.
 
 Necessário:
 - `Python3`
@@ -42,7 +42,7 @@ python main.py
 
 ## Como Utilizar:
 
-Ao iniciar o programa, você verá a tela de login onde é possivel criar um novo perfil ou carregar um perfil já existente. Após fazer o login, você terá acesso às opções do usuário, onde é possível realizar operações como:
+Ao iniciar o programa, você verá a tela de login, onde é possivel criar um novo perfil ou carregar um perfil já existente. Após fazer o login, você terá acesso às opções do usuário, onde é possível realizar operações como:
 - criar novas senhas
 - visualizar e consultar as senhas armazenadas
 - gerar estatísticas das senhas utilizadas
